@@ -5,18 +5,11 @@
  */
 package sep.client;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-import sep.seeter.net.message.Bye;
-import sep.seeter.net.message.Publish;
-import sep.seeter.net.message.SeetsReply;
-import sep.seeter.net.message.SeetsReq;
 
 /**
  *
@@ -46,11 +39,14 @@ public final class SeetController {
 
     public void Process(BufferedReader reader) throws IOException {
         do {
-
-            stateHandle(sModel.getState());
-            processInput(reader);
-            stateSwitch(sModel.getState(), this.cmd);
-
+            try {
+                stateHandle(sModel.getState());
+                processInput(reader);
+                stateSwitch(sModel.getState(), this.cmd);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.out.println("Could not parse command/args");
+                sModel.setState(AppState.MAIN);
+            }
         } while (sModel.getState() != AppState.EXIT);
     }
 
@@ -74,12 +70,15 @@ public final class SeetController {
         String[] rawargs = split.toArray(new String[split.size()]);
         return rawargs;
     }
-    
 
     public void processInput(BufferedReader read) throws IOException {
-        this.input = this.getInput(read);
-        this.cmd = this.getCommand(input);
-        this.args = this.getArgs(input);
+        try {
+            this.input = this.getInput(read);
+            this.cmd = this.getCommand(input);
+            this.args = this.getArgs(input);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Something Went Wrong");
+        }
     }
 
     public boolean argsErrCheck(String string) {
@@ -107,12 +106,12 @@ public final class SeetController {
     public void stateSwitch(AppState state, String cmd) {
         switch (state) {
             case MAIN:
-                if ("compose".startsWith(cmd) && !argsErrCheck(args[0])) {
+                if ("compose".startsWith(cmd)) {
                     sModel.setState(AppState.DRAFTING);
                     seetInvoker doCompose = new seetInvoker(compose = new seetCompose(args));
                     doCompose.execute();
                     break;
-                } else if ("fetch".startsWith(cmd) && argsErrCheck(args[0])) {
+                } else if ("fetch".startsWith(cmd)) {
                     seetInvoker doFetch = new seetInvoker(fetch = new seetFetch(args));
                     doFetch.execute();
                     break;
@@ -127,14 +126,15 @@ public final class SeetController {
                 }
 
             case DRAFTING:
-                if ("body".startsWith(cmd) && argsErrCheck(args[0])) {
-                    sModel.setState(AppState.DRAFTING);
-                    seetInvoker doCompose = new seetInvoker(compose = new seetCompose(args));
-                    doCompose.execute();
+                if ("body".startsWith(cmd)) {
+                    seetInvoker doBody = new seetInvoker(body = new seetBody(this.args));
+                    doBody.execute();
                     break;
-                } else if ("fetch".startsWith(cmd) && argsErrCheck(args[0])) {
-                    seetInvoker doFetch = new seetInvoker(fetch = new seetFetch(args));
-                    doFetch.execute();
+                } else if ("send".startsWith(cmd)) {
+                    seetInvoker doSend = new seetInvoker(send = new seetSend(user));
+                    doSend.execute();
+                    sModel.setState(AppState.MAIN);
+                    SeetCommand.draftTopic = null;
                     break;
                 } else if ("exit".startsWith(cmd)) {
                     seetInvoker doExit = new seetInvoker(exit = new seetExit());
@@ -150,7 +150,7 @@ public final class SeetController {
                 break;
         }
     }
-/*
+    /*
     public void mainHandle(String cmd) {
         switch (cmd) {
             case "compose":

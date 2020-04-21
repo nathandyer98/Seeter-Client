@@ -4,14 +4,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 import sep.seeter.net.message.Bye;
-import sep.seeter.net.message.Publish;
-import sep.seeter.net.message.SeetsReply;
-import sep.seeter.net.message.SeetsReq;
 
 /**
  * This class is an initial work-in-progress prototype for a command line Seeter
@@ -80,32 +75,11 @@ public class Client {
         this.user = user;
         this.host = host;
         this.port = port;
-
     }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         Client client = new Client(args[0], args[1], Integer.parseInt(args[2]));
         client.run();
-    }
-
-    public String getUserInput(BufferedReader read) throws IOException {
-        String input = read.readLine();
-        if (input == null) {
-            throw new IOException("Input stream closed while reading");
-        }
-        return input;
-    }
-
-    public String getCommand(String input) {
-        List<String> split = Arrays.stream(input.trim().split("\\ ")).map(x -> x.trim()).collect(Collectors.toList());
-        String command = split.remove(0);
-        return command;
-    }
-
-    public String[] getArgs(String input) {
-        List<String> split = Arrays.stream(input.trim().split("\\ ")).map(x -> x.trim()).collect(Collectors.toList());
-        String[] args = split.toArray(new String[split.size()]);
-        return args;
     }
 
 // Run the client
@@ -132,7 +106,6 @@ public class Client {
 
         } catch (IOException ex) {
             throw new RuntimeException(ex);
-
         } finally {
             reader.close();
             if (helper.chan.isOpen()) {
@@ -142,58 +115,8 @@ public class Client {
             }
         }
     }
+}
 /*
-// Main loop: print user options, read user input and process
-    public void loop(CLFormatter helper, BufferedReader reader) throws IOException,
-            ClassNotFoundException {
-
-        seetExit exit = new seetExit();
-        state = state.MAIN;
-        String draftTopic = null;
-        List<String> draftLines = new LinkedList<>();
-        boolean done = false;
-
-        while (done != true) {
-
-            if (state == state.MAIN) {
-                System.out.print(helper.formatMainMenuPrompt());
-            } else {
-                System.out.print(helper.formatDraftingMenuPrompt(draftTopic, draftLines));
-            }
-            String input = getUserInput(reader);
-            String cmd = getCommand(input);
-            String[] args = getArgs(input);
-
-            switch (cmd) {
-                case "exit":
-                    seetInvoker doExit = new seetInvoker(exit);
-                    doExit.execute();
-                    break;
-                case "compose":
-                    state = state.DRAFTING;
-                    draftTopic = args[0];
-                    break;
-                case "fetch":
-                    helper.chan.send(new SeetsReq(args[0]));
-                    SeetsReply rep = (SeetsReply) helper.chan.receive();
-                    System.out.print(helper.formatFetched(args[0], rep.users, rep.lines));
-                    break;
-                case "body":
-                    String line = Arrays.stream(args).collect(Collectors.joining());
-                    draftLines.add(line);
-                    break;
-                case "send":
-                    helper.chan.send(new Publish(user, draftTopic, draftLines));
-                    state = state.MAIN;
-                    draftTopic = null;
-                    break;
-                default:
-                    System.out.println("Could not parse command/args.");
-            }
-        }
-    }
-}*/
-
     //Main loop: print user options, read user input and process
     public void loop(CLFormatter helper, BufferedReader reader) throws IOException,
             ClassNotFoundException {
@@ -267,4 +190,4 @@ public class Client {
         }
     }
 }
-//*/
+ */

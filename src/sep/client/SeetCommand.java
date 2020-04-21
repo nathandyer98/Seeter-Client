@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-import sep.seeter.net.message.Bye;
 import sep.seeter.net.message.Publish;
 import sep.seeter.net.message.SeetsReply;
 import sep.seeter.net.message.SeetsReq;
@@ -31,11 +30,14 @@ public class SeetCommand {
 
     public void body(String[] args) {
         String line = Arrays.stream(args).collect(Collectors.joining());
-        draftLines.add(line);
+        if (line.isEmpty()){}
+        else{
+        draftLines.add(line);}
     }
 
     public void send(String user) throws IOException {
         CLFormatter.chan.send(new Publish(user, draftTopic, draftLines));
         draftTopic = null;
+        draftLines.clear();
     }  
 }

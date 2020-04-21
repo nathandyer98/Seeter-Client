@@ -4,18 +4,18 @@ package sep.client;
  *
  * @author Nathan
  */
-public class seetCompose implements iCommand{
-    
+public class SeetBody implements iCommand{
+
     SeetCommand theSeet = new SeetCommand();
-    private String[] args;
+    private final String[] args;
     
-    public seetCompose(String[] args){
+    public SeetBody(String[] args){
         this.args = args;
     }
-
+    
     @Override
     public void execute() {
-        this.theSeet.compose(args);
+        this.theSeet.body(args);
     }
     
 }

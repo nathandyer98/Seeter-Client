@@ -4,7 +4,7 @@ package sep.client;
  *
  * @author Nathan
  */
-public class seetExit implements iCommand{
+public class SeetExit implements iCommand{
 
     SeetCommand theSeet = new SeetCommand();
     

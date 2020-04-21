@@ -8,12 +8,12 @@ import java.util.logging.Logger;
  *
  * @author Nathan
  */
-public class seetFetch implements iCommand{
+public class SeetFetch implements iCommand{
 
     SeetCommand theSeet = new SeetCommand();
     private final String[] args;
     
-    public seetFetch(String[] args){
+    public SeetFetch(String[] args){
         this.args = args;
     }
     
@@ -22,7 +22,7 @@ public class seetFetch implements iCommand{
         try {
             this.theSeet.fetch(args);
         } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(seetFetch.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SeetFetch.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

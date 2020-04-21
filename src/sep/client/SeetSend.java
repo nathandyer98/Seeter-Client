@@ -8,12 +8,12 @@ import java.util.logging.Logger;
  *
  * @author Nathan
  */
-public class seetSend implements iCommand{
+public class SeetSend implements iCommand{
 
     SeetCommand theSeet = new SeetCommand();
     private final String user;
     
-    public seetSend(String user){
+    public SeetSend(String user){
         this.user = user;
     }
     
@@ -22,7 +22,7 @@ public class seetSend implements iCommand{
         try {
             this.theSeet.send(user);
         } catch (IOException ex) {
-            Logger.getLogger(seetSend.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SeetSend.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

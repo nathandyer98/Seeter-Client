@@ -9,11 +9,11 @@ package sep.client;
  *
  * @author Nathan
  */
-public class seetInvoker {
+public class SeetInvoker {
     
     private final iCommand theCommand;
 
-    public seetInvoker(iCommand newCommand){
+    public SeetInvoker(iCommand newCommand){
         
         this.theCommand = newCommand;
     }

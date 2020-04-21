@@ -39,5 +39,15 @@ public class SeetCommand {
         CLFormatter.chan.send(new Publish(user, draftTopic, draftLines));
         draftTopic = null;
         draftLines.clear();
-    }  
+    }
+    
+    /*
+    public String getDraftTopic(){
+        return this.draftTopic;
+    }
+    
+    public List<String> getDraftLines(){
+        return this.getDraftLines();
+    }
+*/
 }

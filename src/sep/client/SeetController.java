@@ -9,13 +9,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 /**
  *
  * @author Nathan
  */
-public final class SeetController {
+public class SeetController {
 
     private SeetModel sModel;
     private String user;
@@ -24,12 +26,14 @@ public final class SeetController {
     private String cmd;
     private String args[] = null;
 
-    private SeetCommand Seet;
-    private seetExit exit;
-    private seetFetch fetch;
-    private seetCompose compose;
-    private seetBody body;
-    private seetSend send;
+    private SeetExit exit;
+    private SeetFetch fetch;
+    private SeetCompose compose;
+    private SeetBody body;
+    private SeetSend send;
+  
+    private ResourceBundle msg;
+    private static final String RESOURCE_PATH = "resources/MessageBundle";
 
     public SeetController(String user) throws IOException {
         this.user = user;
@@ -37,14 +41,21 @@ public final class SeetController {
         sModel = new SeetModel(AppState.MAIN);
     }
 
-    public void Process(BufferedReader reader) throws IOException {
+    public SeetController() {
+        this(new Locale("en", "GB"));
+    }
+
+    public SeetController(Locale locale) {
+        msg = ResourceBundle.getBundle(RESOURCE_PATH, locale);
+    }
+    public void process(BufferedReader reader) throws IOException {
         do {
             try {
                 stateHandle(sModel.getState());
                 processInput(reader);
                 stateSwitch(sModel.getState(), this.cmd);
             } catch (ArrayIndexOutOfBoundsException e) {
-                System.out.println("Could not parse command/args");
+                inputErrPrint();
                 sModel.setState(AppState.MAIN);
             }
         } while (sModel.getState() != AppState.EXIT);
@@ -53,11 +64,11 @@ public final class SeetController {
     public String getInput(BufferedReader read) throws IOException {
         String rawInput = read.readLine();
         if (rawInput == null) {
-            throw new IOException("Input stream closed while reading");
+            throw new IOException(msg.getString("msg_IOinputErr"));
         }
         return rawInput;
     }
-
+    
     public String getCommand(String input) {
         List<String> split = Arrays.stream(input.trim().split("\\ ")).map(x -> x.trim()).collect(Collectors.toList());
         String command = split.remove(0);
@@ -77,16 +88,11 @@ public final class SeetController {
             this.cmd = this.getCommand(input);
             this.args = this.getArgs(input);
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Something Went Wrong");
+            System.out.println(msg.getString("msg_expErr"));
         }
     }
-
-    public boolean argsErrCheck(String string) {
-        return string == null;
-    }
-
     public void inputErrPrint() {
-        System.out.println("Could not parse command/args");
+        System.out.println(msg.getString("msg_inputErrS"));
     }
 
     public void stateHandle(AppState state) throws IOException {
@@ -98,7 +104,9 @@ public final class SeetController {
                 System.out.println(CLFormatter.formatDraftingMenuPrompt(SeetCommand.draftTopic, SeetCommand.draftLines));
                 break;
             case EXIT:
-                System.exit(0);
+                sModel.setState(AppState.EXIT);
+                break;
+            default:
                 break;
         }
     }
@@ -108,15 +116,15 @@ public final class SeetController {
             case MAIN:
                 if ("compose".startsWith(cmd)) {
                     sModel.setState(AppState.DRAFTING);
-                    seetInvoker doCompose = new seetInvoker(compose = new seetCompose(args));
+                    SeetInvoker doCompose = new SeetInvoker(compose = new SeetCompose(args));
                     doCompose.execute();
                     break;
                 } else if ("fetch".startsWith(cmd)) {
-                    seetInvoker doFetch = new seetInvoker(fetch = new seetFetch(args));
+                    SeetInvoker doFetch = new SeetInvoker(fetch = new SeetFetch(args));
                     doFetch.execute();
                     break;
                 } else if ("exit".startsWith(cmd)) {
-                    seetInvoker doExit = new seetInvoker(exit = new seetExit());
+                    SeetInvoker doExit = new SeetInvoker(exit = new SeetExit());
                     sModel.setState(AppState.EXIT);
                     doExit.execute();
                     break;
@@ -127,17 +135,16 @@ public final class SeetController {
 
             case DRAFTING:
                 if ("body".startsWith(cmd)) {
-                    seetInvoker doBody = new seetInvoker(body = new seetBody(this.args));
+                    SeetInvoker doBody = new SeetInvoker(body = new SeetBody(this.args));
                     doBody.execute();
                     break;
                 } else if ("send".startsWith(cmd)) {
-                    seetInvoker doSend = new seetInvoker(send = new seetSend(user));
+                    SeetInvoker doSend = new SeetInvoker(send = new SeetSend(user));
                     doSend.execute();
                     sModel.setState(AppState.MAIN);
-                    SeetCommand.draftTopic = null;
                     break;
                 } else if ("exit".startsWith(cmd)) {
-                    seetInvoker doExit = new seetInvoker(exit = new seetExit());
+                    SeetInvoker doExit = new SeetInvoker(exit = new SeetExit());
                     sModel.setState(AppState.EXIT);
                     doExit.execute();
                     break;
@@ -146,7 +153,7 @@ public final class SeetController {
                     break;
                 }
             default:
-                System.out.println("Could not parse command/args.");
+                inputErrPrint();
                 break;
         }
     }
@@ -155,15 +162,15 @@ public final class SeetController {
         switch (cmd) {
             case "compose":
                 sModel.setState(AppState.DRAFTING);
-                seetInvoker doCompose = new seetInvoker(compose = new seetCompose(this.args));
+                SeetInvoker doCompose = new SeetInvoker(compose = new SeetCompose(this.args));
                 doCompose.execute();
                 break;
             case "fetch":
-                seetInvoker doFetch = new seetInvoker(fetch = new seetFetch(this.args));
+                SeetInvoker doFetch = new SeetInvoker(fetch = new SeetFetch(this.args));
                 doFetch.execute();
                 break;
             case "exit":
-                seetInvoker doExit = new seetInvoker(exit = new seetExit());
+                SeetInvoker doExit = new SeetInvoker(exit = new SeetExit());
                 sModel.setState(AppState.EXIT);
                 doExit.execute();
                 break;
@@ -176,17 +183,17 @@ public final class SeetController {
     public void draftHandle(String cmd) {
         switch (cmd) {
             case "body":
-                seetInvoker doBody = new seetInvoker(body = new seetBody(this.args));
+                SeetInvoker doBody = new SeetInvoker(body = new SeetBody(this.args));
                 doBody.execute();
                 break;
             case "send":
-                seetInvoker doSend = new seetInvoker(send = new seetSend(user));
+                SeetInvoker doSend = new SeetInvoker(send = new SeetSend(user));
                 doSend.execute();
                 sModel.setState(AppState.MAIN);
                 SeetCommand.draftTopic = null;
                 break;
             case "exit":
-                seetInvoker doExit = new seetInvoker(exit = new seetExit());
+                SeetInvoker doExit = new SeetInvoker(exit = new SeetExit());
                 doExit.execute();
                 break;
             default:

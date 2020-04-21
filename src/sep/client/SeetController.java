@@ -22,26 +22,44 @@ import sep.seeter.net.message.SeetsReq;
  *
  * @author Nathan
  */
-public class SeetController {
+public final class SeetController {
 
-    private final SeetModel model;
-    private final SeetView view;
-    private AppState state;
-    BufferedReader reader;
+    private SeetModel sModel;
+    private String user;
 
-    public SeetController(SeetModel model, SeetView view, AppState state, BufferedReader reader) {
-        this.model = model;
-        this.view = view;
-        this.state = state;
-        this.reader = reader;
+    private String input;
+    private String cmd;
+    private String args[] = null;
+
+    private SeetCommand Seet;
+    private seetExit exit;
+    private seetFetch fetch;
+    private seetCompose compose;
+    private seetBody body;
+    private seetSend send;
+
+    public SeetController(String user) throws IOException {
+        this.user = user;
+
+        sModel = new SeetModel(AppState.MAIN);
+    }
+
+    public void Process(BufferedReader reader) throws IOException {
+        do {
+
+            stateHandle(sModel.getState());
+            processInput(reader);
+            stateSwitch(sModel.getState(), this.cmd);
+
+        } while (sModel.getState() != AppState.EXIT);
     }
 
     public String getInput(BufferedReader read) throws IOException {
-        String input = read.readLine();
-        if (input == null) {
+        String rawInput = read.readLine();
+        if (rawInput == null) {
             throw new IOException("Input stream closed while reading");
         }
-        return input;
+        return rawInput;
     }
 
     public String getCommand(String input) {
@@ -52,7 +70,128 @@ public class SeetController {
 
     public String[] getArgs(String input) {
         List<String> split = Arrays.stream(input.trim().split("\\ ")).map(x -> x.trim()).collect(Collectors.toList());
-        String[] args = split.toArray(new String[split.size()]);
-        return args;
+        split.remove(0);
+        String[] rawargs = split.toArray(new String[split.size()]);
+        return rawargs;
     }
+    
+
+    public void processInput(BufferedReader read) throws IOException {
+        this.input = this.getInput(read);
+        this.cmd = this.getCommand(input);
+        this.args = this.getArgs(input);
+    }
+
+    public boolean argsErrCheck(String string) {
+        return string == null;
+    }
+
+    public void inputErrPrint() {
+        System.out.println("Could not parse command/args");
+    }
+
+    public void stateHandle(AppState state) throws IOException {
+        switch (state) {
+            case MAIN:
+                System.out.println(CLFormatter.formatMainMenuPrompt());
+                break;
+            case DRAFTING:
+                System.out.println(CLFormatter.formatDraftingMenuPrompt(SeetCommand.draftTopic, SeetCommand.draftLines));
+                break;
+            case EXIT:
+                System.exit(0);
+                break;
+        }
+    }
+
+    public void stateSwitch(AppState state, String cmd) {
+        switch (state) {
+            case MAIN:
+                if ("compose".startsWith(cmd) && !argsErrCheck(args[0])) {
+                    sModel.setState(AppState.DRAFTING);
+                    seetInvoker doCompose = new seetInvoker(compose = new seetCompose(args));
+                    doCompose.execute();
+                    break;
+                } else if ("fetch".startsWith(cmd) && argsErrCheck(args[0])) {
+                    seetInvoker doFetch = new seetInvoker(fetch = new seetFetch(args));
+                    doFetch.execute();
+                    break;
+                } else if ("exit".startsWith(cmd)) {
+                    seetInvoker doExit = new seetInvoker(exit = new seetExit());
+                    sModel.setState(AppState.EXIT);
+                    doExit.execute();
+                    break;
+                } else {
+                    inputErrPrint();
+                    break;
+                }
+
+            case DRAFTING:
+                if ("body".startsWith(cmd) && argsErrCheck(args[0])) {
+                    sModel.setState(AppState.DRAFTING);
+                    seetInvoker doCompose = new seetInvoker(compose = new seetCompose(args));
+                    doCompose.execute();
+                    break;
+                } else if ("fetch".startsWith(cmd) && argsErrCheck(args[0])) {
+                    seetInvoker doFetch = new seetInvoker(fetch = new seetFetch(args));
+                    doFetch.execute();
+                    break;
+                } else if ("exit".startsWith(cmd)) {
+                    seetInvoker doExit = new seetInvoker(exit = new seetExit());
+                    sModel.setState(AppState.EXIT);
+                    doExit.execute();
+                    break;
+                } else {
+                    inputErrPrint();
+                    break;
+                }
+            default:
+                System.out.println("Could not parse command/args.");
+                break;
+        }
+    }
+/*
+    public void mainHandle(String cmd) {
+        switch (cmd) {
+            case "compose":
+                sModel.setState(AppState.DRAFTING);
+                seetInvoker doCompose = new seetInvoker(compose = new seetCompose(this.args));
+                doCompose.execute();
+                break;
+            case "fetch":
+                seetInvoker doFetch = new seetInvoker(fetch = new seetFetch(this.args));
+                doFetch.execute();
+                break;
+            case "exit":
+                seetInvoker doExit = new seetInvoker(exit = new seetExit());
+                sModel.setState(AppState.EXIT);
+                doExit.execute();
+                break;
+            default:
+                System.out.println("Could not parse command/args.");
+                break;
+        }
+    }
+
+    public void draftHandle(String cmd) {
+        switch (cmd) {
+            case "body":
+                seetInvoker doBody = new seetInvoker(body = new seetBody(this.args));
+                doBody.execute();
+                break;
+            case "send":
+                seetInvoker doSend = new seetInvoker(send = new seetSend(user));
+                doSend.execute();
+                sModel.setState(AppState.MAIN);
+                SeetCommand.draftTopic = null;
+                break;
+            case "exit":
+                seetInvoker doExit = new seetInvoker(exit = new seetExit());
+                doExit.execute();
+                break;
+            default:
+                System.out.println("Could not parse command/args.");
+                break;
+        }
+    }*/
 }

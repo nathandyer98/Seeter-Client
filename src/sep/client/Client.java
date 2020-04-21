@@ -71,6 +71,9 @@ public class Client {
     private final int port;
     AppState state;
 
+    String draftTopic = null;
+    List<String> draftLines = new LinkedList<>();
+
     boolean printSplash = true;
 
     Client(String user, String host, int port) {
@@ -80,7 +83,7 @@ public class Client {
 
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         Client client = new Client(args[0], args[1], Integer.parseInt(args[2]));
         client.run();
     }
@@ -109,8 +112,9 @@ public class Client {
     @SuppressFBWarnings(
             value = "DM_DEFAULT_ENCODING",
             justification = "When reading console, ignore default encoding warning")
-    public void run() throws IOException {
+    public void run() throws IOException, ClassNotFoundException {
 
+        //SeetController 
         BufferedReader reader = null;
         CLFormatter helper = null;
         try {
@@ -122,9 +126,11 @@ public class Client {
             }
             helper = new CLFormatter(this.host, this.port);
             System.out.print(helper.formatSplash(this.user));
-            loop(helper, reader);
+            SeetController Run = new SeetController(this.user);
+            Run.Process(reader);
+            //loop(helper, reader);
 
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             throw new RuntimeException(ex);
 
         } finally {
@@ -141,6 +147,7 @@ public class Client {
     public void loop(CLFormatter helper, BufferedReader reader) throws IOException,
             ClassNotFoundException {
 
+        seetExit exit = new seetExit();
         state = state.MAIN;
         String draftTopic = null;
         List<String> draftLines = new LinkedList<>();
@@ -159,7 +166,8 @@ public class Client {
 
             switch (cmd) {
                 case "exit":
-                    done = true;
+                    seetInvoker doExit = new seetInvoker(exit);
+                    doExit.execute();
                     break;
                 case "compose":
                     state = state.DRAFTING;
@@ -186,7 +194,7 @@ public class Client {
     }
 }*/
 
-// Main loop: print user options, read user input and process
+    //Main loop: print user options, read user input and process
     public void loop(CLFormatter helper, BufferedReader reader) throws IOException,
             ClassNotFoundException {
 
@@ -234,8 +242,7 @@ public class Client {
                     // Fetch seets from server
                     helper.chan.send(new SeetsReq(rawArgs[0]));
                     SeetsReply rep = (SeetsReply) helper.chan.receive();
-                    System.out.print(
-                            helper.formatFetched(rawArgs[0], rep.users, rep.lines));
+                    System.out.print(helper.formatFetched(rawArgs[0], rep.users, rep.lines));
                 } else {
                     System.out.println("Could not parse command/args.");
                 }

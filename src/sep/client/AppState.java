@@ -13,4 +13,5 @@ public enum AppState {
 
     MAIN,
     DRAFTING,
+    EXIT,
 }

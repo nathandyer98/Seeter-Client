@@ -11,5 +11,17 @@ package sep.client;
  */
 public class SeetModel {
     
+    private AppState state;
     
+    public SeetModel(AppState state){
+        this.state = state;
+    }
+    
+    public AppState getState(){
+        return state;
+    }
+    
+    public void setState(AppState state){
+        this.state = state;
+    }
 }

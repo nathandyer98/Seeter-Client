@@ -6,15 +6,11 @@ package sep.client;
  */
 public class seetExit implements iCommand{
 
-    SeetCommand app;
+    SeetCommand theSeet = new SeetCommand();
     
-    public seetExit(SeetCommand newApp){
-        
-        this.app = newApp;
-    }
     @Override
     public void execute() {
-        app.exit();
+        theSeet.exit();
     }
     
 }

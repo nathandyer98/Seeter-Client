@@ -5,11 +5,17 @@ package sep.client;
  * @author Nathan
  */
 public class seetCompose implements iCommand{
+    
+    SeetCommand theSeet = new SeetCommand();
+    private String[] args;
+    
+    public seetCompose(String[] args){
+        this.args = args;
+    }
 
     @Override
     public void execute() {
-        throw new UnsupportedOperationException("Not supported yet."); 
-        //To change body of generated methods, choose Tools | Templates.
+        this.theSeet.compose(args);
     }
     
 }

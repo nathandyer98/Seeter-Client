@@ -6,10 +6,16 @@ package sep.client;
  */
 public class seetBody implements iCommand{
 
+    SeetCommand theSeet = new SeetCommand();
+    private final String[] args;
+    
+    public seetBody(String[] args){
+        this.args = args;
+    }
+    
     @Override
     public void execute() {
-        throw new UnsupportedOperationException("Not supported yet."); 
-        //To change body of generated methods, choose Tools | Templates.
+        this.theSeet.body(args);
     }
     
 }

@@ -14,6 +14,10 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 /**
+ *  The SeetController Class
+ * This class is the main controller of the Seeter App,
+ * this class processes the User's input and turns them into commands and arguments,
+ * it then handles the switch cases and if statements using the arguments.
  *
  * @author Nathan
  */
@@ -36,9 +40,10 @@ public class SeetController {
     private ResourceBundle msg;
 
     /**
+     *  The SeetController constructor
      *
-     * @param user
-     * @throws IOException
+     * @param user parses the User's name to be stored as a field to be used within this classes methods.
+     * @throws IOException used for handling Input/Output errors.
      */
     public SeetController(String user) throws IOException {
         this(new Locale("en", "GB"));
@@ -48,22 +53,25 @@ public class SeetController {
 
     /**
      *
-     * @param locale
+     * @param locale parses locale information of the resource bundle.
      */
     public SeetController(Locale locale) {
         msg = ResourceBundle.getBundle(RESOURCE_PATH, locale);
     }
 
     /**
+     *  This is the process method
+     * Which contains a do while loop, looping until the AppState is exit.
      *
-     * @param reader
-     * @throws IOException
+     * @param reader parses the Buffered Reader, prompting the user for their input.
+     * Which get processed and handled
+     * @throws IOException used for handling Input/Output errors.
      */
     public void process(BufferedReader reader) throws IOException {
         do {
             try {
                 stateHandle(sModel.getState());
-                processInput(reader);
+                processUserInput(reader);
                 stateSwitch(sModel.getState(), this.cmd);
             } catch (ArrayIndexOutOfBoundsException e) {
                 //System.out.println("Could not parse command/args");
@@ -74,10 +82,12 @@ public class SeetController {
     }
 
     /**
+     *  The getInput method
+     * process the user's input and returns a string
      *
-     * @param read
-     * @return
-     * @throws IOException
+     * @param read parses the Buffered Reader, prompting the user for their input.
+     * @return a string interpreted as a user's input
+     * @throws IOException used for handling Input/Output errors.
      */
     public String getInput(BufferedReader read) throws IOException {
         String rawInput = read.readLine();
@@ -88,9 +98,10 @@ public class SeetController {
     }
 
     /**
+     *  The getCommand method
      *
-     * @param input
-     * @return
+     * @param input parses the users input into command and arguments, and stores the command for later use.
+     * @return a string that holds the users command.
      */
     public String getCommand(String input) {
         List<String> split = Arrays.stream(input.trim().split("\\ ")).map(x -> x.trim()).collect(Collectors.toList());
@@ -99,9 +110,10 @@ public class SeetController {
     }
 
     /**
+     * The getArgs method
      *
-     * @param input
-     * @return
+     * @param input parses the users input into command and arguments, and stores the arguments for later use.
+     * @return a String array that holds the users argument.
      */
     public String[] getArgs(String input) {
         List<String> split = Arrays.stream(input.trim().split("\\ ")).map(x -> x.trim()).collect(Collectors.toList());
@@ -109,22 +121,15 @@ public class SeetController {
         String[] rawargs = split.toArray(new String[split.size()]);
         return rawargs;
     }
-/*
-    public String getText(String[] args) {
-        String text = "";
-        for(String txt: args){
-            text = text + " ";
-        }
-        return text;
-    }
-*/
-    
+
     /**
+     *  The processUserInput method
+     * this method takes the user input as a whole and separates and stores the command and arguments. 
      *
-     * @param read
-     * @throws IOException
+     * @param read parses the users input into command and arguments, and stores them for later use.
+     * @throws IOException used for handling Input/Output errors.
      */
-    public void processInput(BufferedReader read) throws IOException {
+    public void processUserInput(BufferedReader read) throws IOException {
         try {
             this.input = this.getInput(read);
             this.cmd = this.getCommand(input);
@@ -135,7 +140,8 @@ public class SeetController {
     }
 
     /**
-     *
+     * The inputError method.
+     * Prints input error message.
      */
     public void inputErrPrint() {
         System.out.println(msg.getString("msg_inputErr"));
@@ -143,9 +149,11 @@ public class SeetController {
     }
 
     /**
+     *  The StateHandle method
+     * 
      *
-     * @param state
-     * @throws IOException
+     * @param state parses the Seeter's state and handles using a switch case.
+     * @throws IOException used for handling Input/Output errors.
      */
     public void stateHandle(AppState state) throws IOException {
         switch (state) {
@@ -164,23 +172,25 @@ public class SeetController {
     }
 
     /**
-     *
-     * @param state
-     * @param cmd
+     *  The stateSwtich method.
+     *Has 2 switch cases, determining the state of the Seeter App and processing the users input
+     * 
+     * @param state parses the Seeter's state and handles using a switch case.
+     * @param cmd parses the Clients command into a if statement, to select which if statement to execute.
      */
     public void stateSwitch(AppState state, String cmd) {
         switch (state) {
             case MAIN:
-                if ("compose".startsWith(cmd)) {
+                if (msg.getString("cmd_compose").startsWith(cmd)) {
                     sModel.setState(AppState.DRAFTING);
                     SeetInvoker doCompose = new SeetInvoker(compose = new SeetCompose(args));
                     doCompose.execute();
                     break;
-                } else if ("fetch".startsWith(cmd)) {
+                } else if (msg.getString("cmd_fetch").startsWith(cmd)) {
                     SeetInvoker doFetch = new SeetInvoker(fetch = new SeetFetch(args));
                     doFetch.execute();
                     break;
-                } else if ("exit".startsWith(cmd)) {
+                } else if (msg.getString("cmd_exit").startsWith(cmd)) {
                     SeetInvoker doExit = new SeetInvoker(exit = new SeetExit());
                     sModel.setState(AppState.EXIT);
                     doExit.execute();
@@ -191,16 +201,16 @@ public class SeetController {
                 }
 
             case DRAFTING:
-                if ("body".startsWith(cmd)) {
+                if (msg.getString("cmd_body").startsWith(cmd)) {
                     SeetInvoker doBody = new SeetInvoker(body = new SeetBody(this.args));
                     doBody.execute();
                     break;
-                } else if ("send".startsWith(cmd)) {
+                } else if (msg.getString("cmd_send").startsWith(cmd)) {
                     SeetInvoker doSend = new SeetInvoker(send = new SeetSend(user));
                     doSend.execute();
                     sModel.setState(AppState.MAIN);
                     break;
-                } else if ("exit".startsWith(cmd)) {
+                } else if (msg.getString("cmd_exit").startsWith(cmd)) {
                     SeetInvoker doExit = new SeetInvoker(exit = new SeetExit());
                     sModel.setState(AppState.EXIT);
                     doExit.execute();

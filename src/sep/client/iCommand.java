@@ -7,13 +7,15 @@ package sep.client;
  */
 
 /**
- *
+ * The Command Interface (iCommand)
+ * This interface is used for commands to implement, ensuring that they are executable.
+ * 
  * @author Nathan
  */
 public interface iCommand {
     
     /**
-     *
+     * An execute method for the invoker to call on the command.
      */
     public void execute();
     

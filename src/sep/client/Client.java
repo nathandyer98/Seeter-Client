@@ -71,7 +71,7 @@ public class Client {
     private ResourceBundle msg;
 
     /**
-     * The Client Constructor used to create User objects
+     * The Client Constructor creates objects that contains the User's information.
      * 
      * @param user parses the user's  name.
      * @param host parses the host information.
@@ -124,11 +124,11 @@ public class Client {
 
             if (this.user.isEmpty() || this.host.isEmpty()) {
                 throw new RuntimeException(msg.getString("msg_userhostErr"));
-                //(msg.getString("msg_userhostErr"));
             }
 
             helper = new CLFormatter(this.host, this.port);
             System.out.print(CLFormatter.formatSplash(this.user));
+            
             SeetController controller = new SeetController(this.user);
             controller.process(reader);
 

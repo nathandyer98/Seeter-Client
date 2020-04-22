@@ -6,6 +6,8 @@
 package sep.client;
 
 /**
+ *  The SeetModel Class
+ * This class is used to store the Seeter's state throughout runtime, allowing to be accessed and mutated.
  *
  * @author Nathan
  */
@@ -14,24 +16,27 @@ public class SeetModel {
     private AppState state;
     
     /**
+     *  The SeetModel Constructor
      *
-     * @param state
+     * @param state parses the Enumeration AppState to be stored as a state inside this class.
      */
     public SeetModel(AppState state){
         this.state = state;
     }
     
     /**
+     *  The accessor method for the SeetModel Class
      *
-     * @return
+     * @return the AppState of the SeetModel object
      */
     public AppState getState(){
         return state;
     }
     
     /**
-     *
-     * @param state
+     * The mutator method for the SeetModel Class
+     * 
+     * @param state parses the AppState, setting the state for the SeetModel object.
      */
     public void setState(AppState state){
         this.state = state;

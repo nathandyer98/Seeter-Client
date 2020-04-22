@@ -3,6 +3,8 @@ package sep.client;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import sep.seeter.net.channel.ClientChannel;
 import sep.seeter.net.message.Message;
 
@@ -12,10 +14,19 @@ import sep.seeter.net.message.Message;
  */
 public class CLFormatter {
 
-    static ClientChannel chan;  // Client-side channel for talking to a Seeter server
+    private static final String RESOURCE_PATH = "resources/MessageBundle";
+    private ResourceBundle msg;
+    static ClientChannel chan;  
+
+// Client-side channel for talking to a Seeter server
 
     CLFormatter(String host, int port) {
+        this(new Locale("en", "GB"));
         this.chan = new ClientChannel(host, port);
+    }
+
+    public CLFormatter(Locale locale) {
+        msg = ResourceBundle.getBundle(RESOURCE_PATH, locale);
     }
 
     /* Interact with Seeter server */

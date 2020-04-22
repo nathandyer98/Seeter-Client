@@ -30,18 +30,23 @@ public class SeetCommand {
 
     public void body(String[] args) {
         String line = Arrays.stream(args).collect(Collectors.joining());
-        if (line.isEmpty()){}
-        else{
-        draftLines.add(line);}
+        if (line.isEmpty()) {
+        } else {
+            draftLines.add(line);
+        }
     }
 
     public void send(String user) throws IOException {
-        CLFormatter.chan.send(new Publish(user, draftTopic, draftLines));
-        draftTopic = null;
-        draftLines.clear();
+        if (draftLines.isEmpty()) {
+        } else {
+            CLFormatter.chan.send(new Publish(user, draftTopic, draftLines));
+            draftTopic = null;
+            draftLines.clear();
+        }
     }
-    
-    /*
+}
+
+/*
     public String getDraftTopic(){
         return this.draftTopic;
     }
@@ -49,5 +54,4 @@ public class SeetCommand {
     public List<String> getDraftLines(){
         return this.getDraftLines();
     }
-*/
-}
+ */

@@ -32,17 +32,14 @@ public class SeetController {
     private SeetBody body;
     private SeetSend send;
   
-    private ResourceBundle msg;
     private static final String RESOURCE_PATH = "resources/MessageBundle";
+    private ResourceBundle msg;
+
 
     public SeetController(String user) throws IOException {
-        this.user = user;
-
-        sModel = new SeetModel(AppState.MAIN);
-    }
-
-    public SeetController() {
         this(new Locale("en", "GB"));
+        this.user = user;
+        sModel = new SeetModel(AppState.MAIN);
     }
 
     public SeetController(Locale locale) {
@@ -55,6 +52,7 @@ public class SeetController {
                 processInput(reader);
                 stateSwitch(sModel.getState(), this.cmd);
             } catch (ArrayIndexOutOfBoundsException e) {
+                //System.out.println("Could not parse command/args");
                 inputErrPrint();
                 sModel.setState(AppState.MAIN);
             }
@@ -92,7 +90,8 @@ public class SeetController {
         }
     }
     public void inputErrPrint() {
-        System.out.println(msg.getString("msg_inputErrS"));
+        System.out.println(msg.getString("msg_inputErr"));
+        //
     }
 
     public void stateHandle(AppState state) throws IOException {

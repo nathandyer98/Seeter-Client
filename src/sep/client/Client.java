@@ -71,13 +71,10 @@ public class Client {
     private ResourceBundle msg;
 
     public Client(String user, String host, int port) {
+        this(new Locale("en", "GB"));
         this.user = user;
         this.host = host;
         this.port = port;
-    }
-
-    public Client() {
-        this(new Locale("en", "GB"));
     }
 
     public Client(Locale locale) {
@@ -102,11 +99,11 @@ public class Client {
 
             if (this.user.isEmpty() || this.host.isEmpty()) {
                 throw new RuntimeException(msg.getString("msg_userhostErr"));
+                //(msg.getString("msg_userhostErr"));
             }
 
             helper = new CLFormatter(this.host, this.port);
             System.out.print(CLFormatter.formatSplash(this.user));
-
             SeetController controller = new SeetController(this.user);
             controller.process(reader);
 

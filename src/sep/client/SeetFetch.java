@@ -13,10 +13,17 @@ public class SeetFetch implements iCommand{
     SeetCommand theSeet = new SeetCommand();
     private final String[] args;
     
+    /**
+     *
+     * @param args
+     */
     public SeetFetch(String[] args){
         this.args = args;
     }
     
+    /**
+     *
+     */
     @Override
     public void execute() {
         try {

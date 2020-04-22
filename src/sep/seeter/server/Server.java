@@ -87,7 +87,10 @@ import sep.seeter.net.message.Message;
  */
 public class Server implements AutoCloseable {
 
-  protected final boolean debug;
+    /**
+     *
+     */
+    protected final boolean debug;
 
   private final ServerSocket servSock;
 
@@ -160,6 +163,13 @@ public class Server implements AutoCloseable {
 
   /* Seets -- synchronized methods (keep critical sections small) */
 
+    /**
+     *
+     * @param topics
+     * @param seets
+     */
+
+
   protected void addSeets(final Set<String> topics,
       final List<Pair<String, String>> seets) {
     synchronized (this.mutex) {
@@ -174,13 +184,24 @@ public class Server implements AutoCloseable {
     }
   }
 
-  protected Set<String> getTopics() {
+    /**
+     *
+     * @return
+     */
+    protected Set<String> getTopics() {
     synchronized (this.mutex) {
       return new HashSet<>(this.db.keySet());
     }
   }
 
   // Pre: req.index >= 0 -- guaranteed by SeetsReq
+
+    /**
+     *
+     * @param topic
+     * @param index
+     * @return
+     */
   protected List<Pair<String, String>> getSeets(final String topic,
       final int index) {
     synchronized (this.mutex) {

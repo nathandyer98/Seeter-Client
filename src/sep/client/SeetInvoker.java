@@ -13,11 +13,18 @@ public class SeetInvoker {
     
     private final iCommand theCommand;
 
+    /**
+     *
+     * @param newCommand
+     */
     public SeetInvoker(iCommand newCommand){
         
         this.theCommand = newCommand;
     }
     
+    /**
+     *
+     */
     public void execute(){
         
         this.theCommand.execute();

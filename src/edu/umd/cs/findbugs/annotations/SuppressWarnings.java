@@ -40,8 +40,13 @@ public @interface SuppressWarnings {
      * The set of FindBugs warnings that are to be suppressed by the compiler in the
      * annotated element.
      *
+     * @return 
      */
     String[] value() default {};
 
+    /**
+     *
+     * @return
+     */
     String justification() default "";
 }

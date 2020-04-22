@@ -13,14 +13,26 @@ public class SeetModel {
     
     private AppState state;
     
+    /**
+     *
+     * @param state
+     */
     public SeetModel(AppState state){
         this.state = state;
     }
     
+    /**
+     *
+     * @return
+     */
     public AppState getState(){
         return state;
     }
     
+    /**
+     *
+     * @param state
+     */
     public void setState(AppState state){
         this.state = state;
     }

@@ -13,10 +13,17 @@ public class SeetSend implements iCommand{
     SeetCommand theSeet = new SeetCommand();
     private final String user;
     
+    /**
+     *
+     * @param user
+     */
     public SeetSend(String user){
         this.user = user;
     }
     
+    /**
+     *
+     */
     @Override
     public void execute() {
         try {

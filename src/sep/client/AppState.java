@@ -11,7 +11,18 @@ package sep.client;
  */
 public enum AppState {
 
+    /**
+     * The "Main" state of the Seeter Client
+     */
     MAIN,
+
+    /**
+     * The "Drafting" state of the Seeter Client
+     */
     DRAFTING,
+
+    /**
+     * The "Exit" state of the Seeter Client
+     */
     EXIT,
 }

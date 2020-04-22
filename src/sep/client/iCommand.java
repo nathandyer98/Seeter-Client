@@ -12,6 +12,9 @@ package sep.client;
  */
 public interface iCommand {
     
+    /**
+     *
+     */
     public void execute();
     
 }

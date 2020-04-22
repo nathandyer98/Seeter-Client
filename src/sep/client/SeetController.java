@@ -31,20 +31,34 @@ public class SeetController {
     private SeetCompose compose;
     private SeetBody body;
     private SeetSend send;
-  
+
     private static final String RESOURCE_PATH = "resources/MessageBundle";
     private ResourceBundle msg;
 
-
+    /**
+     *
+     * @param user
+     * @throws IOException
+     */
     public SeetController(String user) throws IOException {
         this(new Locale("en", "GB"));
         this.user = user;
         sModel = new SeetModel(AppState.MAIN);
     }
 
+    /**
+     *
+     * @param locale
+     */
     public SeetController(Locale locale) {
         msg = ResourceBundle.getBundle(RESOURCE_PATH, locale);
     }
+
+    /**
+     *
+     * @param reader
+     * @throws IOException
+     */
     public void process(BufferedReader reader) throws IOException {
         do {
             try {
@@ -59,6 +73,12 @@ public class SeetController {
         } while (sModel.getState() != AppState.EXIT);
     }
 
+    /**
+     *
+     * @param read
+     * @return
+     * @throws IOException
+     */
     public String getInput(BufferedReader read) throws IOException {
         String rawInput = read.readLine();
         if (rawInput == null) {
@@ -66,20 +86,44 @@ public class SeetController {
         }
         return rawInput;
     }
-    
+
+    /**
+     *
+     * @param input
+     * @return
+     */
     public String getCommand(String input) {
         List<String> split = Arrays.stream(input.trim().split("\\ ")).map(x -> x.trim()).collect(Collectors.toList());
         String command = split.remove(0);
         return command;
     }
 
+    /**
+     *
+     * @param input
+     * @return
+     */
     public String[] getArgs(String input) {
         List<String> split = Arrays.stream(input.trim().split("\\ ")).map(x -> x.trim()).collect(Collectors.toList());
         split.remove(0);
         String[] rawargs = split.toArray(new String[split.size()]);
         return rawargs;
     }
-
+/*
+    public String getText(String[] args) {
+        String text = "";
+        for(String txt: args){
+            text = text + " ";
+        }
+        return text;
+    }
+*/
+    
+    /**
+     *
+     * @param read
+     * @throws IOException
+     */
     public void processInput(BufferedReader read) throws IOException {
         try {
             this.input = this.getInput(read);
@@ -89,11 +133,20 @@ public class SeetController {
             System.out.println(msg.getString("msg_expErr"));
         }
     }
+
+    /**
+     *
+     */
     public void inputErrPrint() {
         System.out.println(msg.getString("msg_inputErr"));
         //
     }
 
+    /**
+     *
+     * @param state
+     * @throws IOException
+     */
     public void stateHandle(AppState state) throws IOException {
         switch (state) {
             case MAIN:
@@ -110,6 +163,11 @@ public class SeetController {
         }
     }
 
+    /**
+     *
+     * @param state
+     * @param cmd
+     */
     public void stateSwitch(AppState state, String cmd) {
         switch (state) {
             case MAIN:

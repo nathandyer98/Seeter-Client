@@ -70,6 +70,13 @@ public class Client {
     private static final String RESOURCE_PATH = "resources/MessageBundle";
     private ResourceBundle msg;
 
+    /**
+     * The Client Constructor used to create User objects
+     * 
+     * @param user parses the user's  name.
+     * @param host parses the host information.
+     * @param port parses the port number.
+     */
     public Client(String user, String host, int port) {
         this(new Locale("en", "GB"));
         this.user = user;
@@ -77,16 +84,34 @@ public class Client {
         this.port = port;
     }
 
+    /**
+     * A Client Constructor used for Internationalisation.
+     * 
+     * @param locale parses locale information of the resource bundle.
+     */
     public Client(Locale locale) {
         msg = ResourceBundle.getBundle(RESOURCE_PATH, locale);
     }
 
+    /**
+     * The Main method of Seeter App.
+     * @param args parses arguments to be called within the Client Constructor.
+     * @throws IOException used for handling Input/Output errors.
+     * @throws ClassNotFoundException used for handling class not found error.
+     */
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         Client client = new Client(args[0], args[1], Integer.parseInt(args[2]));
         client.run();
     }
 
 // Run the client
+
+    /**
+     *  The main Run Command used to run the Seeter App.
+     * 
+     * @throws IOException used for handling Input/Output errors.
+     * @throws ClassNotFoundException used for handling class not found error.
+     */
     @SuppressFBWarnings(
             value = "DM_DEFAULT_ENCODING", justification = "When reading console, ignore default encoding warning")
     public void run() throws IOException, ClassNotFoundException {

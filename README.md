@@ -1,6 +1,6 @@
 # Seeter-Client
 
-Seeter is a very simple text-based tweeter application for in-house use by your
+Seeter is a very simple text-based tweeter application for in-house use by an
 organisation. The intent is to provide a lightweight messaging library that can be quickly integrated into
 other development projects, e.g., by running it from shell scripts, embedding it into other applications,
 and so on.

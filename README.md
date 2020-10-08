@@ -21,7 +21,7 @@ can be found in the Javadoc of the sep.seeter.client.Client class.
 Ultimately, your organisation requires this prototype Client to be refactored and redesigned according to
 the following Specification. 
 
-The Seeter client was a project set within the Software Engineering Practice module, of which we we given the task
+The Seeter client was a project set within the Software Engineering Practice module, of which we were given the task
 the refactor and redesign the 'Seeter' Client so that it uses the Command pattern whilst also adopting the MVC framework.
 
 The Commands 
